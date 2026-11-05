@@ -1,4 +1,4 @@
-const CACHE = "ai-dad-42c331e908";
+const CACHE = "ai-dad-83c740db04";
 const PRECACHE = ["./","index.html","manifest.webmanifest","icons/icon-180.png","icons/icon-192.png","icons/icon-512.png","icons/maskable-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()));

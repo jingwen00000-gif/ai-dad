@@ -2,36 +2,45 @@
 @import "tw-animate-css";
 
 /*
- * AI Dad 主题：信任感的蓝 + 温暖的黄。
+ * AI Dad 主题 V2：象牙白底 + 靛蓝 + 暖阳黄，点缀珊瑚红 / 薄荷绿。
+ * 柔和、低饱和、阴影细腻 —— 给孩子用要友好，给家长看要有质感。
  * 变量命名沿用 shadcn/ui，以后 `npx shadcn add` 的组件可以直接使用。
  */
 :root {
-  --radius: 1.25rem;
+  --radius: 1.5rem;
 
-  --background: #fffaf0;          /* 奶油白 */
-  --foreground: #1d2b4f;          /* 深海军蓝文字 */
+  --background: #faf6ef;          /* 象牙白 */
+  --foreground: #1e2340;          /* 墨蓝文字 */
   --card: #ffffff;
-  --card-foreground: #1d2b4f;
+  --card-foreground: #1e2340;
   --popover: #ffffff;
-  --popover-foreground: #1d2b4f;
+  --popover-foreground: #1e2340;
 
-  --primary: #2f6fed;             /* 爸爸蓝 */
+  --primary: #4a63e7;             /* 爸爸靛蓝 */
   --primary-foreground: #ffffff;
-  --secondary: #ffc93c;           /* 暖阳黄 */
-  --secondary-foreground: #3d2a00;
-  --accent: #fff1c7;              /* 浅黄底 */
-  --accent-foreground: #5a3d00;
-  --muted: #f3eee2;
-  --muted-foreground: #6b7390;
-  --destructive: #e5484d;
+  --secondary: #ffc94d;           /* 暖阳黄 */
+  --secondary-foreground: #3b2a00;
+  --accent: #fff3d6;              /* 浅阳光底 */
+  --accent-foreground: #6b4a00;
+  --muted: #f2ede4;
+  --muted-foreground: #6e7391;
+  --destructive: #e5534b;
 
-  --border: #ece4d2;
-  --input: #e4dcc8;
-  --ring: #2f6fed;
+  --border: #ebe4d6;
+  --input: #e2dacb;
+  --ring: #4a63e7;
 
-  --sky: #e8f0ff;                 /* 浅蓝底 */
-  --sky-foreground: #1f4fb8;
-  --success: #22a06b;
+  --sky: #eef1ff;                 /* 浅靛蓝底 */
+  --sky-foreground: #3445b4;
+  --coral: #ff8c6b;               /* 珊瑚红（儿歌） */
+  --coral-soft: #ffe9e2;
+  --mint: #3dbe9a;                /* 薄荷绿（成长） */
+  --mint-soft: #ddf5ec;
+  --success: #2fa877;
+
+  /* 细腻的双层阴影 */
+  --shadow-soft: 0 1px 2px rgb(30 35 64 / 0.04), 0 8px 24px rgb(30 35 64 / 0.07);
+  --shadow-lift: 0 2px 4px rgb(30 35 64 / 0.05), 0 16px 40px rgb(30 35 64 / 0.12);
 }
 
 @theme inline {
@@ -56,6 +65,12 @@
   --color-sky: var(--sky);
   --color-sky-foreground: var(--sky-foreground);
   --color-success: var(--success);
+  --color-coral: var(--coral);
+  --color-coral-soft: var(--coral-soft);
+  --color-mint: var(--mint);
+  --color-mint-soft: var(--mint-soft);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-lift: var(--shadow-lift);
 
   --radius-sm: calc(var(--radius) - 8px);
   --radius-md: calc(var(--radius) - 4px);
@@ -82,6 +97,13 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+  /* 小朋友点按：去掉 iOS 点击时的灰色高亮、长按菜单和双击放大 */
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+  }
 }
 
 /*
@@ -97,11 +119,29 @@
   }
   /* 聊天框高度 = 屏幕高度 − 顶栏 − 底部导航（手机）/ 顶栏（桌面） */
   .chat-height {
-    height: calc(100dvh - 11rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - 13.25rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   }
   @media (min-width: 768px) {
     .chat-height {
       height: calc(100dvh - 7.5rem - env(safe-area-inset-top, 0px));
+    }
+  }
+}
+
+/* ---------- 孩子区通用：按下去会“压一下”的大按钮 ---------- */
+@layer components {
+  .kid-press {
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .kid-press:active {
+    transform: scale(0.96);
+  }
+  @media (hover: hover) {
+    .kid-press:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lift);
     }
   }
 }

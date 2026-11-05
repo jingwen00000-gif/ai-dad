@@ -46,7 +46,7 @@ export default function DadLocationPage() {
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-5">
       {/* 头部 */}
-      <section className="rounded-[2rem] bg-card p-6 text-center shadow-[0_10px_40px_rgba(47,111,237,0.12)] sm:p-8">
+      <section className="rounded-[2rem] bg-card p-6 text-center shadow-lift sm:p-8">
         <DadAvatar className="mx-auto size-32" state={playing ? "talking" : waving ? "waving" : "idle"} online />
         <h1 className="mt-4 text-3xl font-extrabold sm:text-4xl">
           {together ? "Dad is home with you 🏠" : `Dad is in ${dadCity.name} ${dadCity.flag}`}
@@ -161,7 +161,7 @@ export default function DadLocationPage() {
 
 function StatusCard({ emoji, label, value, sub }: { emoji: string; label: string; value: string; sub?: string }) {
   return (
-    <div className="rounded-3xl bg-card p-4 shadow-[0_6px_24px_rgba(29,43,79,0.06)]">
+    <div className="rounded-3xl bg-card p-4 shadow-soft">
       <p className="text-sm font-bold text-muted-foreground">
         <span aria-hidden>{emoji}</span> {label}
       </p>

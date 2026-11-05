@@ -69,7 +69,7 @@ export function DadAvatar(props: AvatarProps) {
       </div>
       {state === "thinking" && (
         <svg viewBox="0 0 30 30" className="absolute -top-[6%] -right-[6%] w-[24%]" aria-hidden>
-          <g className="dad-think" fill="#fff" stroke="#2F6FED" strokeWidth="1.5">
+          <g className="dad-think" fill="#fff" stroke="#4A63E7" strokeWidth="1.5">
             <circle cx="6" cy="24" r="2.5" />
             <circle cx="13" cy="16" r="3.5" />
             <circle cx="22" cy="7" r="5" />
@@ -111,7 +111,7 @@ function DadAvatar2D({ className, state, mood, online = false, look }: AvatarPro
           </clipPath>
         </defs>
 
-        <circle cx="60" cy="60" r="58" fill="#E8F0FF" />
+        <circle cx="60" cy="60" r="58" fill="#EEF1FF" />
 
         <g clipPath={`url(#clip-${uid})`}>
           <g className={cn("dad-figure", s === "happy" && "dad-bounce")}>
@@ -179,11 +179,11 @@ function DadAvatar2D({ className, state, mood, online = false, look }: AvatarPro
           </g>
         </g>
 
-        <circle cx="60" cy="60" r="57" fill="none" stroke="#2F6FED" strokeWidth="4" />
+        <circle cx="60" cy="60" r="57" fill="none" stroke="#4A63E7" strokeWidth="4" />
 
         {/* 思考泡泡 */}
         {s === "thinking" && (
-          <g className="dad-think" fill="#fff" stroke="#2F6FED" strokeWidth="1.5">
+          <g className="dad-think" fill="#fff" stroke="#4A63E7" strokeWidth="1.5">
             <circle cx="92" cy="26" r="2.5" />
             <circle cx="99" cy="18" r="3.5" />
             <circle cx="108" cy="8" r="5" />

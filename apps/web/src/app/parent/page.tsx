@@ -51,7 +51,7 @@ export default function ParentHome() {
           <Link
             key={href}
             href={href}
-            className="flex flex-col gap-4 rounded-3xl bg-card p-5 shadow-[0_6px_24px_rgba(29,43,79,0.06)] transition-transform hover:-translate-y-0.5"
+            className="flex flex-col gap-4 rounded-3xl bg-card p-5 shadow-soft transition-transform hover:-translate-y-0.5"
           >
             <span className={`grid size-12 place-items-center rounded-2xl ${tone}`}>
               <Icon className="size-6" />

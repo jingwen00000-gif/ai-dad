@@ -36,11 +36,11 @@ export const HAIR_COLORS: Record<HairColor, { color: string; label: string }> = 
 };
 
 export const SHIRTS: Record<ShirtColor, { color: string; collar: string; label: string }> = {
-  blue: { color: "#2F6FED", collar: "#FFC93C", label: "Blue" },
+  blue: { color: "#4A63E7", collar: "#FFC93C", label: "Blue" },
   green: { color: "#22A06B", collar: "#FFFFFF", label: "Green" },
   red: { color: "#E5484D", collar: "#FFFFFF", label: "Red" },
   gray: { color: "#6B7390", collar: "#FFC93C", label: "Gray" },
-  yellow: { color: "#FFC93C", collar: "#2F6FED", label: "Yellow" },
+  yellow: { color: "#FFC93C", collar: "#4A63E7", label: "Yellow" },
 };
 
 export const HAIR_STYLES: { value: HairStyle; label: string }[] = [

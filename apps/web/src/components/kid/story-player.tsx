@@ -100,10 +100,10 @@ export function StoryPlayer({ story }: { story: Story }) {
       </article>
 
       {/* 播放控制条 */}
-      <div className="sticky bottom-24 z-20 mt-5 rounded-[2rem] bg-card p-4 shadow-[0_10px_40px_rgba(29,43,79,0.15)] md:bottom-4">
+      <div className="sticky bottom-[calc(7rem+env(safe-area-inset-bottom))] z-20 mt-5 rounded-[2rem] bg-card p-4 shadow-lift md:bottom-4">
         <Progress value={progress} aria-label="Story progress" />
         <div className="mt-3 flex items-center gap-3">
-          <DadAvatar className="size-12 shrink-0" state={playing ? "talking" : finished ? "happy" : "idle"} />
+          <DadAvatar className="size-14 shrink-0" state={playing ? "talking" : finished ? "happy" : "idle"} />
           {finished ? (
             <Button
               onClick={() => {
@@ -111,7 +111,7 @@ export function StoryPlayer({ story }: { story: Story }) {
                 restart();
               }}
               variant="outline"
-              className="flex-1"
+              size="lg" className="flex-1"
             >
               <RotateCcw /> Play again
             </Button>
@@ -120,7 +120,7 @@ export function StoryPlayer({ story }: { story: Story }) {
               // 停止朗读由播放 effect 的清理函数负责
               onClick={() => setPlaying(false)}
               variant="secondary"
-              className="flex-1"
+              size="lg" className="flex-1"
             >
               <Pause /> Pause
             </Button>
@@ -130,7 +130,7 @@ export function StoryPlayer({ story }: { story: Story }) {
                 speech.unlock();
                 setPlaying(true);
               }}
-              className="flex-1"
+              size="lg" className="flex-1"
             >
               <Play /> {current === 0 ? "Play Dad Voice" : "Keep listening"}
             </Button>
@@ -138,6 +138,7 @@ export function StoryPlayer({ story }: { story: Story }) {
           <Button
             variant="outline"
             size="icon"
+            className="size-14"
             aria-label={liked ? "Unlike" : "Like"}
             aria-pressed={liked}
             onClick={() => toggleLike(child.id, story.id)}

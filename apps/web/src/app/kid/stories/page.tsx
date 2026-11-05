@@ -20,12 +20,12 @@ export default function KidStories() {
 
   return (
     <div>
-      <h1 className="text-3xl font-extrabold sm:text-4xl">
+      <h1 className="text-[2rem] leading-tight font-extrabold tracking-tight sm:text-4xl">
         {hello.text} {child.nickname} {hello.emoji}
       </h1>
       <p className="mt-1 text-lg text-muted-foreground">Which story should Dad read?</p>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {sorted.map((s) => (
           <StoryCard
             key={s.id}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, Send, Volume2, VolumeX } from "lucide-react";
+import { Keyboard, Mic, Send, Volume2, VolumeX, X } from "lucide-react";
 import { DadAvatar } from "@/components/dad-avatar";
 import { Button } from "@/components/ui/button";
 import type { AvatarState } from "@/lib/avatar";
@@ -19,6 +19,7 @@ export default function KidChat() {
   const [thinking, setThinking] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [voiceOn, setVoiceOn] = useState(true);
+  const [typing, setTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stopSpeaking = useRef<(() => void) | null>(null);
@@ -88,112 +89,164 @@ export default function KidChat() {
     setVoiceOn(!voiceOn);
   };
 
+  const zh = lang === "zh-CN";
+  const status = speaking
+    ? zh ? "爸爸在说话" : "Dad is talking"
+    : thinking
+      ? zh ? "想一想…" : "Thinking…"
+      : mic.listening
+        ? zh ? "我在听…" : "Listening…"
+        : zh ? "点麦克风说话" : "Tap the mic to talk";
+
+  const tapMic = () => {
+    if (mic.listening) return mic.stop();
+    stopSpeaking.current?.();
+    setSpeaking(false);
+    if (voiceOn) speech.unlock();
+    mic.start();
+  };
+
   return (
-    <div className="chat-height mx-auto flex max-w-2xl flex-col overflow-hidden rounded-[2rem] bg-card shadow-[0_10px_40px_rgba(47,111,237,0.12)]">
-      <div className="flex items-center gap-3 border-b px-5 py-3">
-        <DadAvatar className="size-16" state={avatarState} online />
-        <div className="flex-1">
-          <p className="text-lg font-extrabold">Dad</p>
-          <p className="text-sm font-semibold text-success">
-            {speaking ? "talking…" : thinking ? "thinking…" : mic.listening || draft.trim() ? "listening…" : "Online"}
-          </p>
+    <div className="chat-height mx-auto flex max-w-2xl flex-col">
+      {/* 爸爸 + 状态（横排，给对话留出空间） */}
+      <div className="flex items-center gap-3 pb-3">
+        <DadAvatar className="size-20 shrink-0 sm:size-24" state={avatarState} online />
+        <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
+          <span className="text-xl font-extrabold">Dad</span>
+          <span
+            className={cn(
+              "rounded-full px-3.5 py-1 text-sm font-extrabold shadow-soft",
+              mic.listening ? "bg-destructive text-white" : speaking ? "bg-primary text-primary-foreground" : "bg-card text-foreground",
+            )}
+            aria-live="polite"
+          >
+            {status}
+          </span>
         </div>
         <button
           onClick={toggleVoice}
           aria-pressed={voiceOn}
           aria-label={voiceOn ? "Mute Dad's voice" : "Turn on Dad's voice"}
-          className="grid size-11 place-items-center rounded-full text-muted-foreground hover:bg-muted"
+          className="grid size-12 shrink-0 place-items-center rounded-full bg-card text-muted-foreground shadow-soft"
         >
           {voiceOn ? <Volume2 className="size-6" /> : <VolumeX className="size-6" />}
         </button>
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-5" aria-live="polite">
-        <Bubble role="dad" name="Dad" text={chatGreeting(child.nickname, lang)} />
-        {messages.map((m) => (
-          <Bubble key={m.id} role={m.role} name={m.role === "dad" ? "Dad" : child.nickname} text={m.text} />
-        ))}
-        {thinking && (
-          <div className="flex gap-1 px-2 py-3" aria-label="Dad is thinking">
-            {[0, 1, 2].map((i) => (
-              <span key={i} className="size-2.5 animate-bounce rounded-full bg-primary/60" style={{ animationDelay: `${i * 120}ms` }} />
+      {/* 对话 */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] bg-card shadow-soft">
+        <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4" aria-live="polite">
+          <Bubble role="dad" name="Dad" text={chatGreeting(child.nickname, lang)} />
+          {messages.map((m) => (
+            <Bubble key={m.id} role={m.role} name={m.role === "dad" ? "Dad" : child.nickname} text={m.text} />
+          ))}
+          {/* 孩子说话时，实时显示听到的内容（淡色气泡） */}
+          {mic.listening && !typing && draft.trim() && (
+            <div className="flex flex-col items-end opacity-60" data-testid="live-transcript">
+              <p className="max-w-[88%] rounded-[1.75rem] rounded-tr-md bg-secondary px-5 py-3.5 text-lg leading-relaxed text-secondary-foreground">
+                {draft}…
+              </p>
+            </div>
+          )}
+          {thinking && (
+            <div className="flex gap-1.5 px-3 py-3" aria-label="Dad is thinking">
+              {[0, 1, 2].map((i) => (
+                <span key={i} className="size-3 animate-bounce rounded-full bg-primary/50" style={{ animationDelay: `${i * 120}ms` }} />
+              ))}
+            </div>
+          )}
+          <div ref={bottomRef} />
+        </div>
+
+        {messages.length === 0 && (
+          <div className="grid grid-cols-2 gap-2 px-4 pb-4">
+            {SUGGESTED_PROMPTS[lang].map((p) => (
+              <button
+                key={p}
+                onClick={() => send(p)}
+                className="kid-press rounded-2xl bg-sky px-3 py-3 text-left text-[0.95rem] leading-snug font-bold text-sky-foreground"
+              >
+                {p}
+              </button>
             ))}
           </div>
         )}
-        <div ref={bottomRef} />
+
+        {mic.error && (
+          <div role="status" className="flex items-start gap-2 bg-accent px-4 py-3 text-sm font-semibold text-accent-foreground">
+            <span className="flex-1">{mic.error}</span>
+            <button type="button" onClick={mic.clearError} className="font-bold" aria-label="Dismiss">
+              ✕
+            </button>
+          </div>
+        )}
       </div>
 
-      {messages.length === 0 && (
-        <div className="flex gap-2 overflow-x-auto px-4 pb-3">
-          {SUGGESTED_PROMPTS[lang].map((p) => (
-            <button
-              key={p}
-              onClick={() => send(p)}
-              className="shrink-0 rounded-full border-2 border-border bg-background px-4 py-2 text-sm font-bold hover:border-primary"
-            >
-              {p}
-            </button>
-          ))}
-        </div>
+      {/* 打字（需要时才展开） */}
+      {typing && (
+        <form
+          className="mt-3 flex items-center gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            send(draft);
+          }}
+        >
+          <input
+            autoFocus
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={zh ? "跟爸爸说…" : "Type to Dad…"}
+            aria-label="Message to Dad"
+            maxLength={200}
+            className="h-14 min-w-0 flex-1 rounded-full border-2 border-input bg-card px-5 text-lg outline-none focus-visible:border-ring"
+          />
+          <Button type="submit" size="icon" className="size-14" aria-label="Send" disabled={!draft.trim() || thinking}>
+            <Send />
+          </Button>
+        </form>
       )}
 
-      {mic.error && (
-        <div role="status" className="flex items-start gap-2 border-t bg-accent px-4 py-2 text-sm text-accent-foreground">
-          <span className="flex-1">{mic.error}</span>
-          <button type="button" onClick={mic.clearError} className="font-bold" aria-label="Dismiss">
-            ✕
-          </button>
-        </div>
-      )}
-
-      <form
-        className="flex items-center gap-2 border-t bg-background/60 p-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          send(draft);
-        }}
-      >
+      {/* 大麦克风：最主要的操作 */}
+      <div className="flex items-center justify-center gap-6 pt-3">
         <button
           type="button"
-          onClick={() => {
-            if (mic.listening) return mic.stop();
-            stopSpeaking.current?.();
-            setSpeaking(false);
-            if (voiceOn) speech.unlock();
-            mic.start();
-          }}
-          disabled={thinking}
-          aria-pressed={mic.listening}
-          aria-label={mic.listening ? "Stop and send" : "Talk to Dad"}
-          className={cn(
-            "relative flex h-12 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-bold transition-colors disabled:opacity-50",
-            mic.listening ? "bg-destructive text-white" : "bg-secondary text-secondary-foreground",
-          )}
+          onClick={() => setTyping((v) => !v)}
+          aria-pressed={typing}
+          aria-label={typing ? "Hide keyboard" : "Type a message"}
+          className="kid-press grid size-14 place-items-center rounded-full bg-card text-muted-foreground shadow-soft"
         >
-          {mic.listening && <span className="absolute inset-0 animate-ping rounded-full bg-destructive/40" aria-hidden />}
-          <Mic className="relative size-5" />
-          <span className="relative hidden sm:inline">{mic.listening ? "Listening…" : "Talk"}</span>
+          {typing ? <X className="size-6" /> : <Keyboard className="size-6" />}
         </button>
+
+        <div className="flex flex-col items-center gap-1.5">
+          <button
+            type="button"
+            onClick={tapMic}
+            disabled={thinking}
+            aria-pressed={mic.listening}
+            aria-label={mic.listening ? "Stop and send" : "Talk to Dad"}
+            className={cn(
+              "kid-press relative grid size-20 place-items-center rounded-full shadow-lift transition-colors disabled:opacity-50",
+              mic.listening ? "bg-destructive text-white" : "bg-secondary text-secondary-foreground",
+            )}
+          >
+            {mic.listening && <span className="absolute inset-0 animate-ping rounded-full bg-destructive/35" aria-hidden />}
+            <Mic className="relative size-10" strokeWidth={2.4} />
+          </button>
+          <span className="text-xs font-extrabold text-muted-foreground">
+            {mic.listening ? (zh ? "说完点一下" : "Tap to send") : zh ? "点我说话" : "Tap to talk"}
+          </span>
+        </div>
+
         <button
           type="button"
           onClick={() => setLang(lang === "en-US" ? "zh-CN" : "en-US")}
           aria-label={lang === "en-US" ? "Voice language: English. Switch to Chinese" : "语音语言：中文，切换为英文"}
-          className="h-12 shrink-0 rounded-full border-2 border-border px-3 text-sm font-extrabold text-muted-foreground"
+          className="kid-press grid size-14 place-items-center rounded-full bg-card text-lg font-extrabold text-muted-foreground shadow-soft"
         >
           {lang === "en-US" ? "EN" : "中"}
         </button>
-        <input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder={mic.listening ? (lang === "zh-CN" ? "正在听…" : "Listening…") : lang === "zh-CN" ? "跟爸爸说…" : "Type to Dad…"}
-          aria-label="Message to Dad"
-          maxLength={200}
-          className="h-12 min-w-0 flex-1 rounded-full border-2 border-input bg-card px-4 text-base outline-none focus-visible:border-ring"
-        />
-        <Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim() || thinking}>
-          <Send />
-        </Button>
-      </form>
+      </div>
     </div>
   );
 }
@@ -202,10 +255,10 @@ function Bubble({ role, name, text }: { role: "child" | "dad"; name: string; tex
   const isDad = role === "dad";
   return (
     <div className={cn("flex flex-col", isDad ? "items-start" : "items-end")}>
-      <span className="mb-1 px-2 text-xs font-bold text-muted-foreground">{name}</span>
+      <span className="mb-1 px-3 text-xs font-bold text-muted-foreground">{name}</span>
       <p
         className={cn(
-          "max-w-[85%] rounded-3xl px-4 py-3 text-base leading-relaxed whitespace-pre-line sm:text-lg",
+          "max-w-[88%] rounded-[1.75rem] px-5 py-3.5 text-lg leading-relaxed whitespace-pre-line",
           isDad ? "rounded-tl-md bg-sky text-foreground" : "rounded-tr-md bg-secondary text-secondary-foreground",
         )}
       >

@@ -44,13 +44,13 @@ export function DadMap({ from, to }: { from: City; to: City }) {
     <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={`Flight path from ${from.name} to ${to.name}`}>
       <defs>
         <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse">
-          <circle cx="2" cy="2" r="1.5" fill="#2F6FED" opacity="0.12" />
+          <circle cx="2" cy="2" r="1.5" fill="#4A63E7" opacity="0.12" />
         </pattern>
       </defs>
-      <rect width={W} height={H} rx="28" fill="#E8F0FF" />
+      <rect width={W} height={H} rx="28" fill="#EEF1FF" />
       <rect width={W} height={H} rx="28" fill="url(#dots)" />
 
-      <path d={path} fill="none" stroke="#2F6FED" strokeWidth="3" strokeDasharray="2 10" strokeLinecap="round" />
+      <path d={path} fill="none" stroke="#4A63E7" strokeWidth="3" strokeDasharray="2 10" strokeLinecap="round" />
 
       {reduceMotion ? (
         <text x={midX} y={midY} fontSize="30" textAnchor="middle" dominantBaseline="central">
@@ -65,7 +65,7 @@ export function DadMap({ from, to }: { from: City; to: City }) {
 
       {[
         { c: from, p: a, color: "#FFC93C", label: "You" },
-        { c: to, p: b, color: "#2F6FED", label: "Dad" },
+        { c: to, p: b, color: "#4A63E7", label: "Dad" },
       ].map(({ c, p, color, label }) => (
         <g key={c.code}>
           <circle cx={p.x} cy={p.y} r="16" fill={color} opacity="0.25">

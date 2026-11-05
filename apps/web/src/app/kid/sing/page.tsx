@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Mic, Music2, Play, Search } from "lucide-react";
+import { Play, Search } from "lucide-react";
 import { DadAvatar } from "@/components/dad-avatar";
 import { personalize, SONGS, type Song } from "@/lib/songs";
 import { useActiveChild } from "@/store/app-store";
+import { cn } from "@/lib/utils";
+
+const TILE_TONES = ["bg-coral-soft", "bg-sky", "bg-accent", "bg-mint-soft"];
 
 export default function SingPage() {
   const child = useActiveChild();
@@ -24,11 +27,16 @@ export default function SingPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <section className="rounded-[2rem] bg-card p-6 text-center shadow-[0_10px_40px_rgba(47,111,237,0.12)] sm:p-8">
-        <DadAvatar className="mx-auto size-32" />
-        <h1 className="mt-4 text-3xl font-extrabold sm:text-5xl">Dad Sings For You 🎵</h1>
-        <p className="mt-2 text-lg text-muted-foreground">Sing along with Dad, anytime.</p>
-        <label className="mx-auto mt-6 flex max-w-xl items-center gap-3 rounded-full border-2 border-input bg-background px-5 focus-within:border-ring">
+      <section className="flex items-center gap-4">
+        <DadAvatar className="size-20 shrink-0" />
+        <div>
+          <h1 className="text-[2rem] leading-tight font-extrabold tracking-tight">Sing with Dad 🎵</h1>
+          <p className="text-muted-foreground">Pick a song!</p>
+        </div>
+      </section>
+
+      <section>
+        <label className="flex items-center gap-3 rounded-full bg-card px-5 shadow-soft focus-within:ring-4 focus-within:ring-ring/20">
           <Search className="size-5 shrink-0 text-muted-foreground" />
           <span className="sr-only">Search songs</span>
           <input
@@ -53,18 +61,6 @@ export default function SingPage() {
         </>
       )}
 
-      <section className="rounded-3xl bg-card p-6">
-        <p className="flex items-center gap-2 font-extrabold">
-          <Music2 className="size-5" /> How songs will play
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2 text-sm font-bold">
-          <span className="rounded-full bg-sky px-4 py-2 text-sky-foreground">
-            <Mic className="mr-1 inline size-4" /> Dad&apos;s own recording
-          </span>
-          <span className="rounded-full bg-accent px-4 py-2 text-accent-foreground">❤️ Personalized lyrics with your name</span>
-          <span className="rounded-full bg-muted px-4 py-2">🎵 Sing-along lyrics</span>
-        </div>
-      </section>
     </div>
   );
 }
@@ -73,22 +69,22 @@ function SongSection({ title, songs, name }: { title: string; songs: Song[]; nam
   if (songs.length === 0) return null;
   return (
     <section>
-      <h2 className="mb-4 text-2xl font-extrabold">{title}</h2>
+      <h2 className="mb-3 text-xl font-extrabold">{title}</h2>
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        {songs.map((s) => (
+        {songs.map((s, i) => (
           <Link
             key={s.id}
             href={`/kid/sing/${s.id}`}
-            className="group flex flex-col rounded-3xl bg-card p-5 shadow-[0_6px_24px_rgba(29,43,79,0.06)] transition-transform hover:-translate-y-1"
+            className={cn("kid-press relative flex min-h-40 flex-col rounded-[2rem] p-5 shadow-soft", TILE_TONES[i % TILE_TONES.length])}
           >
-            <span className="text-4xl" aria-hidden>
+            <span className="text-5xl leading-none" aria-hidden>
               {s.emoji}
             </span>
-            <span className="mt-3 leading-tight font-extrabold">{personalize(s.title, name)}</span>
-            <span className="mt-1 text-sm text-muted-foreground">{s.language === "Chinese" ? "中文" : "English"}</span>
+            <span className="mt-3 pr-10 text-[1.05rem] leading-tight font-extrabold">{personalize(s.title, name)}</span>
+            <span className="mt-1 text-xs font-bold opacity-70">{s.language === "Chinese" ? "中文" : "English"}</span>
             {/* 整张卡片就是链接，这里只是视觉上的“播放”提示，不再嵌套 button */}
-            <span className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
-              <Play className="size-4" /> Play
+            <span className="absolute right-4 bottom-4 grid size-10 place-items-center rounded-full bg-white/90 text-primary shadow-soft" aria-hidden>
+              <Play className="ml-0.5 size-5 fill-current" />
             </span>
           </Link>
         ))}

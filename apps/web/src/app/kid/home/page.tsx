@@ -63,13 +63,13 @@ export default function KidHome() {
           }}
           disabled={saying}
           aria-label={zh ? "点爸爸，听爸爸打招呼" : "Tap Dad to hear hello"}
-          className="kid-press block rounded-full"
+          className={cn("kid-press clay-glow block rounded-full", saying && "is-active")}
         >
           <DadAvatar className="size-40 drop-shadow-xl sm:size-56" state={state} online />
         </button>
         <span
           className={cn(
-            "absolute -top-1 -right-6 rounded-2xl rounded-bl-md bg-card px-3.5 py-2 text-sm font-extrabold shadow-soft transition-opacity sm:-right-10",
+            "clay absolute -top-1 -right-6 rounded-2xl rounded-bl-md px-3.5 py-2 text-sm font-extrabold transition-opacity sm:-right-10",
             saying && "opacity-0",
           )}
         >
@@ -80,9 +80,9 @@ export default function KidHome() {
       {/* 跟爸爸说话：最大的按钮 */}
       <Link
         href="/kid/chat"
-        className="kid-press flex h-20 items-center gap-4 rounded-[2rem] bg-primary pr-6 pl-3 text-primary-foreground shadow-lift"
+        className="kid-press clay-indigo flex h-20 items-center gap-4 rounded-[2rem] pr-6 pl-3"
       >
-        <span className="grid size-14 place-items-center rounded-full bg-white/20">
+        <span className="grid size-14 place-items-center rounded-full bg-white/25 shadow-[inset_0_2px_1px_rgb(255_255_255/0.4)]">
           <Mic className="size-7" strokeWidth={2.5} />
         </span>
         <span className="flex-1 text-2xl font-extrabold">{zh ? "跟爸爸说话" : "Talk to Dad"}</span>
@@ -93,16 +93,16 @@ export default function KidHome() {
 
       {/* 四个大方块 */}
       <div className="grid grid-cols-2 gap-4">
-        <Tile href="/kid/stories" emoji="📚" label={zh ? "听故事" : "Stories"} className="bg-secondary text-secondary-foreground" />
-        <Tile href="/kid/sing" emoji="🎵" label={zh ? "唱儿歌" : "Songs"} className="bg-coral text-white" />
+        <Tile href="/kid/stories" emoji="📚" label={zh ? "听故事" : "Stories"} className="clay-sun" />
+        <Tile href="/kid/sing" emoji="🎵" label={zh ? "唱儿歌" : "Songs"} className="clay-coral" />
         <Tile
           href="/kid/dad-location"
           emoji={dadAway ? dadCity.flag : "🏠"}
           label={zh ? "爸爸在哪" : "Where's Dad"}
           sub={dadAway ? dadCity.name : undefined}
-          className="bg-mint text-white"
+          className="clay-mint"
         />
-        <Tile href="/kid/growth" emoji="⭐" label={zh ? "我的星星" : "My Stars"} className="bg-card text-foreground" />
+        <Tile href="/kid/growth" emoji="⭐" label={zh ? "我的星星" : "My Stars"} className="clay text-foreground" />
       </div>
     </div>
   );
@@ -125,12 +125,12 @@ function Tile({
     <Link
       href={href}
       className={cn(
-        "kid-press relative flex aspect-[1/0.78] flex-col justify-between overflow-hidden rounded-[2rem] p-4 shadow-soft sm:p-5",
+        "kid-press relative flex aspect-[1/0.78] flex-col justify-between overflow-hidden rounded-[2rem] p-4 sm:p-5",
         className,
       )}
     >
       <span aria-hidden className="absolute -top-6 -right-6 size-24 rounded-full bg-white/15" />
-      <span className="relative text-5xl leading-none drop-shadow-sm" aria-hidden>
+      <span className="relative text-5xl leading-none drop-shadow-[0_4px_6px_rgb(0_0_0/0.18)]" aria-hidden>
         {emoji}
       </span>
       <span className="relative">

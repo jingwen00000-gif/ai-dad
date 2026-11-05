@@ -72,7 +72,7 @@ export function StoryPlayer({ story }: { story: Story }) {
         </div>
       </header>
 
-      <article className="mt-5 space-y-4 rounded-[2rem] bg-card p-6 text-lg leading-relaxed sm:p-8 sm:text-xl">
+      <article className="mt-5 space-y-4 clay rounded-[2rem] p-6 text-lg leading-relaxed sm:p-8 sm:text-xl">
         {story.paragraphs.map((p, i) => (
           <p
             key={i}
@@ -92,7 +92,7 @@ export function StoryPlayer({ story }: { story: Story }) {
         <div className="flex flex-wrap gap-2 border-t pt-4">
           <span className="text-sm font-bold text-muted-foreground">New words:</span>
           {story.newWords.map((w) => (
-            <span key={w.word} className="rounded-full bg-sky px-3 py-1 text-sm font-bold text-sky-foreground">
+            <span key={w.word} className="clay-sky rounded-full px-3 py-1 text-sm font-bold">
               {w.word} · {w.zh}
             </span>
           ))}
@@ -100,7 +100,7 @@ export function StoryPlayer({ story }: { story: Story }) {
       </article>
 
       {/* 播放控制条 */}
-      <div className="sticky bottom-[calc(7rem+env(safe-area-inset-bottom))] z-20 mt-5 rounded-[2rem] bg-card p-4 shadow-lift md:bottom-4">
+      <div className="sticky bottom-[calc(7rem+env(safe-area-inset-bottom))] z-20 mt-5 clay rounded-[2rem] p-4 md:bottom-4">
         <Progress value={progress} aria-label="Story progress" />
         <div className="mt-3 flex items-center gap-3">
           <DadAvatar className="size-14 shrink-0" state={playing ? "talking" : finished ? "happy" : "idle"} />
@@ -110,7 +110,7 @@ export function StoryPlayer({ story }: { story: Story }) {
                 speech.unlock();
                 restart();
               }}
-              variant="outline"
+              variant="claySoft"
               size="lg" className="flex-1"
             >
               <RotateCcw /> Play again
@@ -119,7 +119,7 @@ export function StoryPlayer({ story }: { story: Story }) {
             <Button
               // 停止朗读由播放 effect 的清理函数负责
               onClick={() => setPlaying(false)}
-              variant="secondary"
+              variant="claySun"
               size="lg" className="flex-1"
             >
               <Pause /> Pause
@@ -130,13 +130,14 @@ export function StoryPlayer({ story }: { story: Story }) {
                 speech.unlock();
                 setPlaying(true);
               }}
+              variant="clay"
               size="lg" className="flex-1"
             >
               <Play /> {current === 0 ? "Play Dad Voice" : "Keep listening"}
             </Button>
           )}
           <Button
-            variant="outline"
+            variant="claySoft"
             size="icon"
             className="size-14"
             aria-label={liked ? "Unlike" : "Like"}
@@ -197,7 +198,7 @@ function StoryQuiz({ story }: { story: Story }) {
   };
 
   return (
-    <section ref={ref} className="mt-6 scroll-mt-24 rounded-[2rem] bg-card p-6 sm:p-8" aria-live="polite">
+    <section ref={ref} className="mt-6 scroll-mt-24 clay rounded-[2rem] p-6 sm:p-8" aria-live="polite">
       {done ? (
         <div className="text-center">
           <p className="text-6xl">{score === story.questions.length ? "🏆" : "⭐"}</p>
@@ -208,10 +209,10 @@ function StoryQuiz({ story }: { story: Story }) {
             {score === story.questions.length ? "Wow, you were listening really well!" : "Great try! Dad is proud of you."}
           </p>
           <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
-            <Button asChild>
+            <Button asChild variant="clay">
               <Link href="/kid/stories">Another story</Link>
             </Button>
-            <Button asChild variant="secondary">
+            <Button asChild variant="claySun">
               <Link href="/kid/growth">See my growth</Link>
             </Button>
           </div>

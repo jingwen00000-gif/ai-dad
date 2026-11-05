@@ -15,6 +15,9 @@ const buttonVariants = cva(
         ghost: "hover:bg-muted",
         destructive: "bg-destructive text-white hover:bg-destructive/90",
         link: "text-primary underline-offset-4 hover:underline",
+        clay: "clay-indigo hover:brightness-105",
+        claySun: "clay-sun hover:brightness-105",
+        claySoft: "clay text-foreground",
       },
       size: {
         default: "h-11 px-5 text-base",

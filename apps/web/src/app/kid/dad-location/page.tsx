@@ -46,7 +46,7 @@ export default function DadLocationPage() {
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-5">
       {/* 头部 */}
-      <section className="rounded-[2rem] bg-card p-6 text-center shadow-lift sm:p-8">
+      <section className="clay rounded-[2rem] p-6 text-center sm:p-8">
         <DadAvatar className="mx-auto size-32" state={playing ? "talking" : waving ? "waving" : "idle"} online />
         <h1 className="mt-4 text-3xl font-extrabold sm:text-4xl">
           {together ? "Dad is home with you 🏠" : `Dad is in ${dadCity.name} ${dadCity.flag}`}
@@ -71,7 +71,7 @@ export default function DadLocationPage() {
 
       {/* 地图 */}
       {!together && (
-        <section className="rounded-[2rem] bg-card p-5 sm:p-8">
+        <section className="clay rounded-[2rem] p-5 sm:p-8">
           <h2 className="text-2xl font-extrabold">Dad Around The World</h2>
           <div className="mt-4">
             <DadMap from={home} to={dadCity} />
@@ -80,7 +80,7 @@ export default function DadLocationPage() {
             <p className="text-lg font-extrabold">
               {home.name} → {dadCity.name} · {km.toLocaleString("en-US")} km
             </p>
-            <p className="rounded-full bg-accent px-3 py-1 text-sm font-bold text-accent-foreground">
+            <p className="clay-cream rounded-full px-3 py-1 text-sm font-bold">
               ✈️ About {flightHours} hours by plane
             </p>
           </div>
@@ -89,12 +89,14 @@ export default function DadLocationPage() {
 
       <div className="grid gap-5 md:grid-cols-2">
         {/* 爸爸留言 */}
-        <section className="rounded-[2rem] bg-secondary/30 p-6 sm:p-8">
+        <section className="clay-cream rounded-[2rem] p-6 sm:p-8">
           <h2 className="text-2xl font-extrabold">Message From Dad 💌</h2>
           {message ? (
             <>
-              <p className="mt-4 rounded-3xl bg-card p-5 text-lg leading-8 whitespace-pre-line">{message.text}</p>
+              <p className="mt-4 clay rounded-3xl p-5 text-lg leading-8 whitespace-pre-line">{message.text}</p>
               <Button
+                variant="clay"
+                size="lg"
                 className="mt-5"
                 onClick={() => {
                   speech.unlock();
@@ -112,12 +114,12 @@ export default function DadLocationPage() {
         </section>
 
         {/* 爸爸的今天：只展示真实事件 */}
-        <section className="rounded-[2rem] bg-card p-6 sm:p-8">
+        <section className="clay rounded-[2rem] p-6 sm:p-8">
           <h2 className="text-2xl font-extrabold">Today Dad</h2>
           <ul className="mt-4 space-y-3">
             {DAD_JOURNEY[0].items.map((it) => (
               <li key={it.text} className="flex items-center gap-3 text-lg">
-                <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-sky text-xl">{it.emoji}</span>
+                <span className="clay-sky grid size-10 shrink-0 place-items-center rounded-2xl text-xl">{it.emoji}</span>
                 <span className="font-semibold">{it.text}</span>
                 <span className="ml-auto text-success" aria-label="done">
                   ✔
@@ -129,7 +131,7 @@ export default function DadLocationPage() {
       </div>
 
       {/* 时间线 */}
-      <section className="rounded-[2rem] bg-card p-6 sm:p-8">
+      <section className="clay rounded-[2rem] p-6 sm:p-8">
         <h2 className="text-2xl font-extrabold">Dad Journey</h2>
         <ol className="mt-5 space-y-6 border-l-4 border-sky pl-6">
           {DAD_JOURNEY.map((day) => {
@@ -161,7 +163,7 @@ export default function DadLocationPage() {
 
 function StatusCard({ emoji, label, value, sub }: { emoji: string; label: string; value: string; sub?: string }) {
   return (
-    <div className="rounded-3xl bg-card p-4 shadow-soft">
+    <div className="clay rounded-3xl p-4">
       <p className="text-sm font-bold text-muted-foreground">
         <span aria-hidden>{emoji}</span> {label}
       </p>

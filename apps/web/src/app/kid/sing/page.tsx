@@ -8,7 +8,7 @@ import { personalize, SONGS, type Song } from "@/lib/songs";
 import { useActiveChild } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 
-const TILE_TONES = ["bg-coral-soft", "bg-sky", "bg-accent", "bg-mint-soft"];
+const TILE_TONES = ["clay-rose", "clay-sky", "clay-cream", "clay"];
 
 export default function SingPage() {
   const child = useActiveChild();
@@ -36,7 +36,7 @@ export default function SingPage() {
       </section>
 
       <section>
-        <label className="flex items-center gap-3 rounded-full bg-card px-5 shadow-soft focus-within:ring-4 focus-within:ring-ring/20">
+        <label className="clay-inset flex items-center gap-3 rounded-full px-5 focus-within:ring-4 focus-within:ring-ring/20">
           <Search className="size-5 shrink-0 text-muted-foreground" />
           <span className="sr-only">Search songs</span>
           <input
@@ -75,7 +75,7 @@ function SongSection({ title, songs, name }: { title: string; songs: Song[]; nam
           <Link
             key={s.id}
             href={`/kid/sing/${s.id}`}
-            className={cn("kid-press relative flex min-h-40 flex-col rounded-[2rem] p-5 shadow-soft", TILE_TONES[i % TILE_TONES.length])}
+            className={cn("kid-press relative flex min-h-40 flex-col rounded-[2rem] p-5", TILE_TONES[i % TILE_TONES.length])}
           >
             <span className="text-5xl leading-none" aria-hidden>
               {s.emoji}
@@ -83,7 +83,7 @@ function SongSection({ title, songs, name }: { title: string; songs: Song[]; nam
             <span className="mt-3 pr-10 text-[1.05rem] leading-tight font-extrabold">{personalize(s.title, name)}</span>
             <span className="mt-1 text-xs font-bold opacity-70">{s.language === "Chinese" ? "中文" : "English"}</span>
             {/* 整张卡片就是链接，这里只是视觉上的“播放”提示，不再嵌套 button */}
-            <span className="absolute right-4 bottom-4 grid size-10 place-items-center rounded-full bg-white/90 text-primary shadow-soft" aria-hidden>
+            <span className="clay absolute right-4 bottom-4 grid size-10 place-items-center rounded-full text-primary" aria-hidden>
               <Play className="ml-0.5 size-5 fill-current" />
             </span>
           </Link>

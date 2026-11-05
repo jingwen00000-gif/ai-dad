@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Keyboard, Mic, Send, Volume2, VolumeX, X } from "lucide-react";
 import { DadAvatar } from "@/components/dad-avatar";
-import { Button } from "@/components/ui/button";
 import type { AvatarState } from "@/lib/avatar";
 import { chatGreeting, dadReply, detectLang, SUGGESTED_PROMPTS } from "@/lib/dad-replies";
 import { useSpeech } from "@/lib/use-speech";
@@ -110,13 +109,15 @@ export default function KidChat() {
     <div className="chat-height mx-auto flex max-w-2xl flex-col">
       {/* 爸爸 + 状态（横排，给对话留出空间） */}
       <div className="flex items-center gap-3 pb-3">
-        <DadAvatar className="size-20 shrink-0 sm:size-24" state={avatarState} online />
+        <span className={cn("clay-glow shrink-0", (speaking || mic.listening) && "is-active")}>
+          <DadAvatar className="block size-20 sm:size-24" state={avatarState} online />
+        </span>
         <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
           <span className="text-xl font-extrabold">Dad</span>
           <span
             className={cn(
-              "rounded-full px-3.5 py-1 text-sm font-extrabold shadow-soft",
-              mic.listening ? "bg-destructive text-white" : speaking ? "bg-primary text-primary-foreground" : "bg-card text-foreground",
+              "rounded-full px-3.5 py-1 text-sm font-extrabold",
+              mic.listening ? "clay-coral" : speaking ? "clay-indigo" : "clay text-foreground",
             )}
             aria-live="polite"
           >
@@ -127,14 +128,14 @@ export default function KidChat() {
           onClick={toggleVoice}
           aria-pressed={voiceOn}
           aria-label={voiceOn ? "Mute Dad's voice" : "Turn on Dad's voice"}
-          className="grid size-12 shrink-0 place-items-center rounded-full bg-card text-muted-foreground shadow-soft"
+          className="kid-press clay grid size-12 shrink-0 place-items-center rounded-full text-muted-foreground"
         >
           {voiceOn ? <Volume2 className="size-6" /> : <VolumeX className="size-6" />}
         </button>
       </div>
 
       {/* 对话 */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] bg-card shadow-soft">
+      <div className="clay flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem]">
         <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4" aria-live="polite">
           <Bubble role="dad" name="Dad" text={chatGreeting(child.nickname, lang)} />
           {messages.map((m) => (
@@ -143,7 +144,7 @@ export default function KidChat() {
           {/* 孩子说话时，实时显示听到的内容（淡色气泡） */}
           {mic.listening && !typing && draft.trim() && (
             <div className="flex flex-col items-end opacity-60" data-testid="live-transcript">
-              <p className="max-w-[88%] rounded-[1.75rem] rounded-tr-md bg-secondary px-5 py-3.5 text-lg leading-relaxed text-secondary-foreground">
+              <p className="clay-cream max-w-[88%] rounded-[1.75rem] rounded-tr-md px-5 py-3.5 text-lg leading-relaxed">
                 {draft}…
               </p>
             </div>
@@ -164,7 +165,7 @@ export default function KidChat() {
               <button
                 key={p}
                 onClick={() => send(p)}
-                className="kid-press rounded-2xl bg-sky px-3 py-3 text-left text-[0.95rem] leading-snug font-bold text-sky-foreground"
+                className="kid-press clay-sky rounded-2xl px-3 py-3 text-left text-[0.95rem] leading-snug font-bold"
               >
                 {p}
               </button>
@@ -198,11 +199,16 @@ export default function KidChat() {
             placeholder={zh ? "跟爸爸说…" : "Type to Dad…"}
             aria-label="Message to Dad"
             maxLength={200}
-            className="h-14 min-w-0 flex-1 rounded-full border-2 border-input bg-card px-5 text-lg outline-none focus-visible:border-ring"
+            className="clay-inset h-14 min-w-0 flex-1 rounded-full px-5 text-lg outline-none focus-visible:ring-4 focus-visible:ring-ring/25"
           />
-          <Button type="submit" size="icon" className="size-14" aria-label="Send" disabled={!draft.trim() || thinking}>
-            <Send />
-          </Button>
+          <button
+            type="submit"
+            aria-label="Send"
+            disabled={!draft.trim() || thinking}
+            className="kid-press clay-indigo grid size-14 shrink-0 place-items-center rounded-full disabled:opacity-50"
+          >
+            <Send className="size-6" />
+          </button>
         </form>
       )}
 
@@ -213,7 +219,7 @@ export default function KidChat() {
           onClick={() => setTyping((v) => !v)}
           aria-pressed={typing}
           aria-label={typing ? "Hide keyboard" : "Type a message"}
-          className="kid-press grid size-14 place-items-center rounded-full bg-card text-muted-foreground shadow-soft"
+          className="kid-press clay grid size-14 place-items-center rounded-full text-muted-foreground"
         >
           {typing ? <X className="size-6" /> : <Keyboard className="size-6" />}
         </button>
@@ -226,11 +232,11 @@ export default function KidChat() {
             aria-pressed={mic.listening}
             aria-label={mic.listening ? "Stop and send" : "Talk to Dad"}
             className={cn(
-              "kid-press relative grid size-20 place-items-center rounded-full shadow-lift transition-colors disabled:opacity-50",
-              mic.listening ? "bg-destructive text-white" : "bg-secondary text-secondary-foreground",
+              "kid-press relative grid size-20 place-items-center rounded-full disabled:opacity-50",
+              mic.listening ? "clay-coral" : "clay-sun",
             )}
           >
-            {mic.listening && <span className="absolute inset-0 animate-ping rounded-full bg-destructive/35" aria-hidden />}
+            {mic.listening && <span className="absolute inset-0 animate-ping rounded-full bg-coral/40" aria-hidden />}
             <Mic className="relative size-10" strokeWidth={2.4} />
           </button>
           <span className="text-xs font-extrabold text-muted-foreground">
@@ -242,7 +248,7 @@ export default function KidChat() {
           type="button"
           onClick={() => setLang(lang === "en-US" ? "zh-CN" : "en-US")}
           aria-label={lang === "en-US" ? "Voice language: English. Switch to Chinese" : "语音语言：中文，切换为英文"}
-          className="kid-press grid size-14 place-items-center rounded-full bg-card text-lg font-extrabold text-muted-foreground shadow-soft"
+          className="kid-press clay grid size-14 place-items-center rounded-full text-lg font-extrabold text-muted-foreground"
         >
           {lang === "en-US" ? "EN" : "中"}
         </button>
@@ -259,7 +265,7 @@ function Bubble({ role, name, text }: { role: "child" | "dad"; name: string; tex
       <p
         className={cn(
           "max-w-[88%] rounded-[1.75rem] px-5 py-3.5 text-lg leading-relaxed whitespace-pre-line",
-          isDad ? "rounded-tl-md bg-sky text-foreground" : "rounded-tr-md bg-secondary text-secondary-foreground",
+          isDad ? "clay-sky rounded-tl-md" : "clay-cream rounded-tr-md",
         )}
       >
         {text}

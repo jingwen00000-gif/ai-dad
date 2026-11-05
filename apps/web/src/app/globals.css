@@ -9,7 +9,7 @@
 :root {
   --radius: 1.5rem;
 
-  --background: #faf6ef;          /* 象牙白 */
+  --background: #f4f1ec;          /* 暖灰白（软陶风格的底色） */
   --foreground: #1e2340;          /* 墨蓝文字 */
   --card: #ffffff;
   --card-foreground: #1e2340;
@@ -128,6 +128,98 @@
   }
 }
 
+/* ---------- 软陶 / 黏土 3D 风格（孩子区） ----------
+ * .clay            凸起的白色软陶表面（卡片、圆按钮、导航）
+ * .clay-sun/indigo/coral/mint/sky/cream  彩色糖果按钮：渐变 + 顶部高光 + 底部暗影 + 同色柔光
+ * .clay-inset      压进去的表面（输入框、进度条槽）
+ * .clay-glow       头像外的发光圆环
+ */
+@layer components {
+  .clay {
+    background: linear-gradient(180deg, #ffffff 0%, #f8f5f0 100%);
+    box-shadow:
+      inset 0 2px 1px rgb(255 255 255 / 0.95),
+      inset 0 -4px 8px rgb(110 90 60 / 0.07),
+      0 2px 4px rgb(60 48 32 / 0.06),
+      0 12px 28px rgb(60 48 32 / 0.1);
+  }
+  .clay-inset {
+    background: #f1ede6;
+    box-shadow:
+      inset 0 2px 6px rgb(60 48 32 / 0.1),
+      inset 0 -1px 0 rgb(255 255 255 / 0.9);
+  }
+  .clay-sun,
+  .clay-indigo,
+  .clay-coral,
+  .clay-mint,
+  .clay-sky,
+  .clay-cream,
+  .clay-rose {
+    box-shadow:
+      inset 0 3px 2px rgb(255 255 255 / 0.45),
+      inset 0 -6px 12px rgb(0 0 0 / 0.1),
+      0 2px 4px rgb(60 48 32 / 0.08),
+      0 14px 28px var(--clay-glow);
+  }
+  .clay-sun {
+    --clay-glow: rgb(245 176 40 / 0.4);
+    background: linear-gradient(180deg, #ffdd7a 0%, #ffc43d 55%, #f4ad22 100%);
+    color: #4a3200;
+  }
+  .clay-indigo {
+    --clay-glow: rgb(98 84 240 / 0.38);
+    background: linear-gradient(135deg, #6d7cff 0%, #5a5cf0 50%, #8b5cf6 100%);
+    color: #fff;
+  }
+  .clay-coral {
+    --clay-glow: rgb(255 120 90 / 0.38);
+    background: linear-gradient(180deg, #ffa48a 0%, #ff8466 60%, #f2694c 100%);
+    color: #fff;
+  }
+  .clay-mint {
+    --clay-glow: rgb(40 180 140 / 0.35);
+    background: linear-gradient(180deg, #5ddcb4 0%, #34c294 60%, #22a87e 100%);
+    color: #fff;
+  }
+  .clay-sky {
+    --clay-glow: rgb(98 120 240 / 0.18);
+    background: linear-gradient(180deg, #f3f5ff 0%, #e2e7ff 100%);
+    color: #2f3a8f;
+  }
+  .clay-cream {
+    --clay-glow: rgb(200 160 60 / 0.16);
+    background: linear-gradient(180deg, #fff8e6 0%, #ffecc2 100%);
+    color: #5c4300;
+  }
+  .clay-rose {
+    --clay-glow: rgb(255 130 110 / 0.18);
+    background: linear-gradient(180deg, #fff1ec 0%, #ffdcd2 100%);
+    color: #7a2e1c;
+  }
+  /* 导航里没选中的小方块：米色软陶 */
+  .clay-tile {
+    background: linear-gradient(180deg, #f8f2e8 0%, #ece3d4 100%);
+    box-shadow:
+      inset 0 2px 1px rgb(255 255 255 / 0.9),
+      inset 0 -3px 6px rgb(110 90 60 / 0.1),
+      0 4px 10px rgb(60 48 32 / 0.08);
+    color: #6e6656;
+  }
+  .clay-glow {
+    border-radius: 9999px;
+    box-shadow:
+      0 0 0 4px rgb(124 108 255 / 0.18),
+      0 0 28px rgb(124 108 255 / 0.35);
+    transition: box-shadow 0.3s ease;
+  }
+  .clay-glow.is-active {
+    box-shadow:
+      0 0 0 5px rgb(124 108 255 / 0.3),
+      0 0 40px rgb(124 108 255 / 0.6);
+  }
+}
+
 /* ---------- 孩子区通用：按下去会“压一下”的大按钮 ---------- */
 @layer components {
   .kid-press {
@@ -136,7 +228,7 @@
       box-shadow 0.15s ease;
   }
   .kid-press:active {
-    transform: scale(0.96);
+    transform: translateY(2px) scale(0.97);
   }
   @media (hover: hover) {
     .kid-press:hover {

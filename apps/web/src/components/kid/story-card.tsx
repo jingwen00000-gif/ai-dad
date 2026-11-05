@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /** 故事卡片：大封面 + 短标题。给不识字的孩子，封面图案就是主要信息 */
 export function StoryCard({ story, liked, recommended }: { story: Story; liked?: boolean; recommended?: boolean }) {
   return (
-    <Link href={`/kid/stories/${story.id}`} className="kid-press group flex flex-col overflow-hidden rounded-[2rem] bg-card shadow-soft">
+    <Link href={`/kid/stories/${story.id}`} className="kid-press group flex flex-col overflow-hidden clay rounded-[2rem]">
       <div className={cn("relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br", story.cover)}>
         <span aria-hidden className="absolute -top-8 -left-8 size-28 rounded-full bg-white/15" />
         <span aria-hidden className="absolute -right-10 -bottom-10 size-36 rounded-full bg-white/10" />

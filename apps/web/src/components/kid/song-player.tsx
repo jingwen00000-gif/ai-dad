@@ -42,7 +42,7 @@ export function SongPlayer({ song }: { song: Song }) {
         <ArrowLeft className="size-5" /> All songs
       </Link>
 
-      <section className="rounded-[2rem] bg-card p-6 text-center sm:p-8">
+      <section className="clay rounded-[2rem] p-6 text-center sm:p-8">
         <DadAvatar className="mx-auto size-28" state={playing ? "talking" : done ? "happy" : "idle"} />
         <h1 className="mt-4 text-3xl font-extrabold">
           {song.emoji} {personalize(song.title, child.nickname)}
@@ -54,7 +54,7 @@ export function SongPlayer({ song }: { song: Song }) {
               key={i}
               className={cn(
                 "rounded-2xl px-4 py-2 font-bold transition-all",
-                i === line ? "scale-105 bg-secondary text-secondary-foreground" : i < line ? "text-muted-foreground" : "",
+                i === line ? "clay-sun scale-105" : i < line ? "text-muted-foreground" : "",
               )}
             >
               {l}
@@ -64,11 +64,11 @@ export function SongPlayer({ song }: { song: Song }) {
 
         <div className="mt-8 flex justify-center">
           {playing ? (
-            <Button size="lg" variant="secondary" onClick={() => setPlaying(false)}>
+            <Button size="lg" variant="claySun" onClick={() => setPlaying(false)}>
               <Pause /> Pause
             </Button>
           ) : (
-            <Button size="lg" onClick={start}>
+            <Button size="lg" variant="clay" onClick={start}>
               {done ? <RotateCcw /> : <Play />} {done ? "Sing again" : line >= 0 ? "Keep singing" : "Sing along"}
             </Button>
           )}

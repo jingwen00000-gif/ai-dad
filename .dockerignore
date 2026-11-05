@@ -1,0 +1,20 @@
+# 构建后端镜像只需要 apps/api、packages、infra 和根目录的 pnpm 配置
+**/node_modules
+**/dist
+**/.next
+**/dist-artifact
+**/dist-pwa
+**/.env
+**/.env.*
+!**/.env.example
+apps/api/storage
+**/src/generated
+apps/miniapp/src
+apps/miniapp/config
+apps/ios/ios
+apps/ios/www
+apps/web/src
+apps/web/public
+apps/web/artifact
+.git
+deploy/.env

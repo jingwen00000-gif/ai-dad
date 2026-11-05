@@ -20,6 +20,8 @@ export interface Env {
   VOICE_URL_TTL_SECONDS: number;
   /** 每个账号每天最多生成的字数（命中缓存不计） */
   VOICE_DAILY_CHAR_LIMIT: number;
+  /** 允许跨域访问的网页地址（逗号分隔），如 https://jingwen00000-gif.github.io。开发环境放开全部 */
+  CORS_ORIGINS: string[];
 }
 
 function required(config: Record<string, unknown>, key: string): string {
@@ -47,11 +49,9 @@ export function validateEnv(config: Record<string, unknown>): Env {
   if (mock && nodeEnv === 'production') {
     throw new Error('生产环境禁止开启 WX_MOCK_LOGIN');
   }
+  // 微信登录可选：网页版不用微信；未配置时 /auth/wx-login 返回 503
   const wxAppid = String(config.WX_APPID ?? '');
   const wxSecret = String(config.WX_SECRET ?? '');
-  if (!mock && (!wxAppid || !wxSecret)) {
-    throw new Error('未开启 WX_MOCK_LOGIN 时必须设置 WX_APPID 和 WX_SECRET');
-  }
 
   return {
     NODE_ENV: nodeEnv,
@@ -70,5 +70,9 @@ export function validateEnv(config: Record<string, unknown>): Env {
     PUBLIC_BASE_URL: String(config.PUBLIC_BASE_URL || `http://localhost:${positiveInt(config, 'PORT', 3000)}`),
     VOICE_URL_TTL_SECONDS: positiveInt(config, 'VOICE_URL_TTL_SECONDS', 24 * 3600),
     VOICE_DAILY_CHAR_LIMIT: positiveInt(config, 'VOICE_DAILY_CHAR_LIMIT', 20000),
+    CORS_ORIGINS: String(config.CORS_ORIGINS ?? '')
+      .split(',')
+      .map((s) => s.trim().replace(/\/+$/, ''))
+      .filter(Boolean),
   };
 }

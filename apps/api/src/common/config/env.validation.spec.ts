@@ -28,8 +28,13 @@ describe('validateEnv', () => {
     expect(() => validateEnv({ ...base, JWT_ACCESS_TTL_SECONDS: '-1' })).toThrow('正整数');
   });
 
-  it('未开启 mock 时必须配置微信 AppID / Secret', () => {
-    expect(() => validateEnv({ ...base, WX_APPID: '' })).toThrow('WX_APPID');
+  it('微信配置可选（网页版不用微信登录）', () => {
+    expect(() => validateEnv({ ...base, WX_APPID: '', WX_SECRET: '', NODE_ENV: 'production' })).not.toThrow();
+  });
+
+  it('CORS_ORIGINS 解析为列表，去掉结尾斜杠', () => {
+    const env = validateEnv({ ...base, CORS_ORIGINS: 'https://a.github.io/, https://b.com' });
+    expect(env.CORS_ORIGINS).toEqual(['https://a.github.io', 'https://b.com']);
   });
 
   it('开启 mock 时可以不配置微信', () => {

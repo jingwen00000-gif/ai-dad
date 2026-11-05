@@ -39,9 +39,13 @@ export class WxService {
       return { openid: `mock_${code}` };
     }
 
+    const appid = this.config.get('WX_APPID', { infer: true });
+    const secret = this.config.get('WX_SECRET', { infer: true });
+    if (!appid || !secret) throw new ServiceUnavailableException('微信登录未配置');
+
     const url = new URL(CODE2SESSION_URL);
-    url.searchParams.set('appid', this.config.get('WX_APPID', { infer: true }));
-    url.searchParams.set('secret', this.config.get('WX_SECRET', { infer: true }));
+    url.searchParams.set('appid', appid);
+    url.searchParams.set('secret', secret);
     url.searchParams.set('js_code', code);
     url.searchParams.set('grant_type', 'authorization_code');
 

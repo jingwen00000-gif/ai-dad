@@ -20,6 +20,10 @@ infra/
   docs/
 ```
 
+## 部署到服务器
+
+一台香港轻量服务器 + 一条命令，见 [deploy/README.md](deploy/README.md)。
+
 ## 本地启动
 
 需要 Node 22+、pnpm 10、Docker。

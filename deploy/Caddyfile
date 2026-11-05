@@ -1,0 +1,5 @@
+# HTTPS 网关：自动申请并续期证书，把请求转发给后端
+{$API_DOMAIN} {
+	encode gzip
+	reverse_proxy api:3000
+}

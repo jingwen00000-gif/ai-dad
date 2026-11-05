@@ -24,6 +24,8 @@ interface AppState {
   avatarMode: "2d" | "3d";
   /** 3D 形象文件的元信息（文件本体在 IndexedDB）；version 变化时重新加载 */
   vrm: { version: number; name: string; bytes: number } | null;
+  /** 聊天语言（语音识别、打招呼、推荐问题）；回复跟随孩子实际说的语言 */
+  chatLang: "en-US" | "zh-CN";
 
   setActiveChild: (id: string) => void;
   updateChild: (id: string, patch: Partial<Omit<Child, "id">>) => void;
@@ -37,6 +39,7 @@ interface AppState {
   sendDadMessage: (childId: string, text: string) => void;
   setDadLook: (patch: Partial<DadLook>) => void;
   setAvatarMode: (mode: "2d" | "3d") => void;
+  setChatLang: (lang: "en-US" | "zh-CN") => void;
   setVrm: (vrm: { name: string; bytes: number } | null) => void;
   resetDemo: () => void;
 }
@@ -55,6 +58,7 @@ const initial = {
   dadLook: DEFAULT_LOOK,
   avatarMode: "2d" as "2d" | "3d",
   vrm: null as { version: number; name: string; bytes: number } | null,
+  chatLang: "en-US" as "en-US" | "zh-CN",
 };
 
 export const useAppStore = create<AppState>()(
@@ -104,6 +108,8 @@ export const useAppStore = create<AppState>()(
 
       setAvatarMode: (avatarMode) => set({ avatarMode }),
 
+      setChatLang: (chatLang) => set({ chatLang }),
+
       setVrm: (vrm) =>
         set((s) => ({
           vrm: vrm ? { ...vrm, version: (s.vrm?.version ?? 0) + 1 } : null,
@@ -133,6 +139,7 @@ export const useAppStore = create<AppState>()(
         dadLook,
         avatarMode,
         vrm,
+        chatLang,
       }) => ({
         activeChildId,
         children,
@@ -145,6 +152,7 @@ export const useAppStore = create<AppState>()(
         dadLook,
         avatarMode,
         vrm,
+        chatLang,
       }),
     },
   ),

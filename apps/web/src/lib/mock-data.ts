@@ -15,14 +15,14 @@ import type {
 export const PARENT = { name: "Alex" };
 
 export const INTERESTS: Interest[] = [
-  { code: "dinosaur", name: "Dinosaur", emoji: "🦖" },
-  { code: "space", name: "Space", emoji: "🚀" },
-  { code: "fire_truck", name: "Fire Truck", emoji: "🚒" },
-  { code: "robot", name: "Robot", emoji: "🤖" },
-  { code: "ocean", name: "Ocean", emoji: "🐳" },
-  { code: "panda", name: "Panda", emoji: "🐼" },
-  { code: "train", name: "Train", emoji: "🚂" },
-  { code: "magic", name: "Magic", emoji: "🪄" },
+  { code: "dinosaur", name: "Dinosaur", nameZh: "恐龙", emoji: "🦖" },
+  { code: "space", name: "Space", nameZh: "太空", emoji: "🚀" },
+  { code: "fire_truck", name: "Fire Truck", nameZh: "消防车", emoji: "🚒" },
+  { code: "robot", name: "Robot", nameZh: "机器人", emoji: "🤖" },
+  { code: "ocean", name: "Ocean", nameZh: "海洋", emoji: "🐳" },
+  { code: "panda", name: "Panda", nameZh: "熊猫", emoji: "🐼" },
+  { code: "train", name: "Train", nameZh: "火车", emoji: "🚂" },
+  { code: "magic", name: "Magic", nameZh: "魔法", emoji: "🪄" },
 ];
 
 export const INTEREST_BY_CODE = Object.fromEntries(INTERESTS.map((i) => [i.code, i])) as Record<

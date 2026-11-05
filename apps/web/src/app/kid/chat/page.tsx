@@ -5,7 +5,7 @@ import { Mic, Send, Volume2, VolumeX } from "lucide-react";
 import { DadAvatar } from "@/components/dad-avatar";
 import { Button } from "@/components/ui/button";
 import type { AvatarState } from "@/lib/avatar";
-import { dadReply, SUGGESTED_PROMPTS } from "@/lib/dad-replies";
+import { chatGreeting, dadReply, detectLang, SUGGESTED_PROMPTS } from "@/lib/dad-replies";
 import { useSpeech } from "@/lib/use-speech";
 import { useSpeechInput } from "@/lib/use-speech-input";
 import { useActiveChild, useAppStore } from "@/store/app-store";
@@ -23,7 +23,8 @@ export default function KidChat() {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stopSpeaking = useRef<(() => void) | null>(null);
   const speech = useSpeech();
-  const [lang, setLang] = useState<"en-US" | "zh-CN">("en-US");
+  const lang = useAppStore((s) => s.chatLang);
+  const setLang = useAppStore((s) => s.setChatLang);
   // 孩子说话：识别中把文字实时显示在输入框，说完自动发送
   const mic = useSpeechInput({
     lang,
@@ -66,6 +67,8 @@ export default function KidChat() {
     stopSpeaking.current?.();
     setSpeaking(false);
     addChatMessage(child.id, "child", t);
+    // 孩子用哪种语言说/打字，语音识别就跟着切换，下次直接用
+    if (detectLang(t) !== lang) setLang(detectLang(t));
     setDraft("");
     setThinking(true);
     // 假数据：模拟“思考”时间；正式版接流式大模型 + 爸爸声音
@@ -106,7 +109,7 @@ export default function KidChat() {
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-5" aria-live="polite">
-        <Bubble role="dad" name="Dad" text={`Hi ${child.nickname}! I'm Dad AI. Tell me anything — I'm all ears. 👂`} />
+        <Bubble role="dad" name="Dad" text={chatGreeting(child.nickname, lang)} />
         {messages.map((m) => (
           <Bubble key={m.id} role={m.role} name={m.role === "dad" ? "Dad" : child.nickname} text={m.text} />
         ))}
@@ -122,7 +125,7 @@ export default function KidChat() {
 
       {messages.length === 0 && (
         <div className="flex gap-2 overflow-x-auto px-4 pb-3">
-          {SUGGESTED_PROMPTS.map((p) => (
+          {SUGGESTED_PROMPTS[lang].map((p) => (
             <button
               key={p}
               onClick={() => send(p)}
@@ -182,7 +185,7 @@ export default function KidChat() {
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder={mic.listening ? "Listening…" : "Type to Dad…"}
+          placeholder={mic.listening ? (lang === "zh-CN" ? "正在听…" : "Listening…") : lang === "zh-CN" ? "跟爸爸说…" : "Type to Dad…"}
           aria-label="Message to Dad"
           maxLength={200}
           className="h-12 min-w-0 flex-1 rounded-full border-2 border-input bg-card px-4 text-base outline-none focus-visible:border-ring"

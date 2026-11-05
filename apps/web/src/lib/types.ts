@@ -20,6 +20,7 @@ export type InterestCode =
 export interface Interest {
   code: InterestCode;
   name: string;
+  nameZh: string;
   emoji: string;
 }
 

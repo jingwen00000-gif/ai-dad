@@ -41,8 +41,10 @@ export function useSpeech() {
         const synth = window.speechSynthesis;
         synth.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = "en-US";
-        u.rate = 0.9;
+        // 有中文就用中文声音念，否则用英文
+        const zh = /[\u3400-\u9fff]/.test(text);
+        u.lang = zh ? "zh-CN" : "en-US";
+        u.rate = zh ? 0.95 : 0.9;
         u.pitch = 0.9;
         // 有些环境（无语音包）既不报错也不触发 onend：用计时兜底
         let guard = setTimeout(done, fallbackMs * 2);

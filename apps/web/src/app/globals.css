@@ -1,0 +1,198 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * AI Dad 主题：信任感的蓝 + 温暖的黄。
+ * 变量命名沿用 shadcn/ui，以后 `npx shadcn add` 的组件可以直接使用。
+ */
+:root {
+  --radius: 1.25rem;
+
+  --background: #fffaf0;          /* 奶油白 */
+  --foreground: #1d2b4f;          /* 深海军蓝文字 */
+  --card: #ffffff;
+  --card-foreground: #1d2b4f;
+  --popover: #ffffff;
+  --popover-foreground: #1d2b4f;
+
+  --primary: #2f6fed;             /* 爸爸蓝 */
+  --primary-foreground: #ffffff;
+  --secondary: #ffc93c;           /* 暖阳黄 */
+  --secondary-foreground: #3d2a00;
+  --accent: #fff1c7;              /* 浅黄底 */
+  --accent-foreground: #5a3d00;
+  --muted: #f3eee2;
+  --muted-foreground: #6b7390;
+  --destructive: #e5484d;
+
+  --border: #ece4d2;
+  --input: #e4dcc8;
+  --ring: #2f6fed;
+
+  --sky: #e8f0ff;                 /* 浅蓝底 */
+  --sky-foreground: #1f4fb8;
+  --success: #22a06b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sky: var(--sky);
+  --color-sky-foreground: var(--sky-foreground);
+  --color-success: var(--success);
+
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* 不用 Google Fonts（大陆无法访问）：圆体优先，中文用苹方 / 雅黑 */
+  --font-sans: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/*
+ * 全屏运行（添加到主屏幕 / iOS App）时避开刘海和状态栏。
+ * 普通浏览器里 safe-area 为 0，不影响。
+ */
+@layer components {
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .safe-top-8 {
+    padding-top: calc(2rem + env(safe-area-inset-top, 0px));
+  }
+  /* 聊天框高度 = 屏幕高度 − 顶栏 − 底部导航（手机）/ 顶栏（桌面） */
+  .chat-height {
+    height: calc(100dvh - 11rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
+  @media (min-width: 768px) {
+    .chat-height {
+      height: calc(100dvh - 7.5rem - env(safe-area-inset-top, 0px));
+    }
+  }
+}
+
+/* ---------- AI 爸爸虚拟形象动画（见 components/dad-avatar.tsx） ---------- */
+@layer components {
+  .dad-avatar .dad-figure {
+    transform-box: view-box;
+    transform-origin: 60px 120px;
+    animation: dad-breathe 4s ease-in-out infinite;
+  }
+  .dad-avatar .dad-figure.dad-bounce {
+    animation: dad-bounce 0.7s ease-in-out infinite;
+  }
+  .dad-avatar .dad-head {
+    transform-box: view-box;
+    transform-origin: 60px 84px;
+    transition: transform 0.4s ease;
+    animation: dad-sway 7s ease-in-out infinite;
+  }
+  .dad-avatar .dad-head.dad-head-tilt {
+    animation: none;
+    transform: rotate(-7deg);
+  }
+  .dad-avatar .dad-head.dad-head-up {
+    animation: none;
+    transform: rotate(4deg) translateY(-1px);
+  }
+  .dad-avatar .dad-eyes {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: dad-blink 4.8s infinite;
+  }
+  .dad-avatar .dad-brows {
+    transition: transform 0.3s ease;
+  }
+  .dad-avatar .dad-brows.dad-brows-up {
+    transform: translateY(-2px);
+  }
+  .dad-avatar .dad-arm {
+    transform-box: view-box;
+    transform-origin: 86px 104px;
+    transform: rotate(80deg);
+    transition: transform 0.35s ease;
+  }
+  .dad-avatar .dad-arm.dad-arm-wave {
+    animation: dad-wave 0.45s ease-in-out infinite alternate;
+  }
+  .dad-think circle {
+    animation: dad-think 1.2s ease-in-out infinite;
+  }
+  .dad-think circle:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .dad-think circle:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
+
+@keyframes dad-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1px) scale(1.012); }
+}
+@keyframes dad-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes dad-sway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(1.5deg); }
+}
+@keyframes dad-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+@keyframes dad-wave {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(16deg); }
+}
+@keyframes dad-think {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    /* 无限循环的动画（眨眼、呼吸）只跑一次就停，避免高速闪动 */
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

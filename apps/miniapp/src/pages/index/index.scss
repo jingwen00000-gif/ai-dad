@@ -1,0 +1,105 @@
+.home {
+  padding: 0 40px 220px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  padding: 48px 0 40px;
+}
+
+.hero-title {
+  font-size: 56px;
+  font-weight: 700;
+}
+
+.hero-sub {
+  margin-top: 12px;
+  color: #8a7564;
+  font-size: 28px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  padding: 32px;
+  background: #fff;
+  border-radius: 32px;
+  box-shadow: 0 8px 24px rgba(160, 110, 60, 0.08);
+}
+
+.card-avatar {
+  font-size: 72px;
+  margin-right: 28px;
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-name {
+  font-size: 36px;
+  font-weight: 600;
+}
+
+.card-meta {
+  margin-top: 8px;
+  color: #8a7564;
+  font-size: 26px;
+}
+
+.card-interests {
+  margin-top: 12px;
+  font-size: 26px;
+}
+
+.card-interests.empty {
+  color: #b9a999;
+}
+
+.card-arrow {
+  color: #ff8a3d;
+  font-size: 26px;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120px 0;
+}
+
+.state-emoji {
+  font-size: 120px;
+}
+
+.state-text {
+  margin-top: 24px;
+  font-size: 32px;
+}
+
+.state-hint {
+  margin-top: 12px;
+  color: #8a7564;
+  font-size: 26px;
+}
+
+.btn-retry {
+  margin-top: 32px;
+  font-size: 28px;
+}
+
+.footer {
+  position: fixed;
+  left: 40px;
+  right: 40px;
+  bottom: 64px;
+}

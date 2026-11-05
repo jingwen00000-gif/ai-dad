@@ -1,0 +1,389 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 表结构以 infra/sql/*.sql 为准（含 CHECK 约束、RLS、触发器、视图）。
+// 本文件由 prisma db pull 生成后整理：模型名 PascalCase、字段 camelCase，通过 @@map/@map 映射回数据库。
+
+model ChildInterest {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  childId   String      @map("child_id") @db.Uuid
+  tagId     String      @map("tag_id") @db.Uuid
+  weight    Decimal     @default(3) @db.Decimal(6, 3)
+  status    String      @default("stable")
+  source    String      @default("parent")
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  child     Child       @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tag       InterestTag @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([childId, tagId])
+  @@index([childId, weight(sort: Desc)])
+  @@index([tagId])
+  @@map("child_interests")
+}
+
+model ChildVocab {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  childId       String    @map("child_id") @db.Uuid
+  wordId        String    @map("word_id") @db.Uuid
+  state         String    @default("exposed")
+  box           Int       @default(1) @db.SmallInt
+  nextReviewAt  DateTime? @map("next_review_at") @db.Timestamptz(6)
+  exposures     Int       @default(0)
+  correctCount  Int       @default(0) @map("correct_count")
+  wrongCount    Int       @default(0) @map("wrong_count")
+  producedCount Int       @default(0) @map("produced_count")
+  producedDays  Int       @default(0) @map("produced_days")
+  firstSeenAt   DateTime  @default(now()) @map("first_seen_at") @db.Timestamptz(6)
+  lastSeenAt    DateTime? @map("last_seen_at") @db.Timestamptz(6)
+  masteredAt    DateTime? @map("mastered_at") @db.Timestamptz(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  child         Child     @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  word          VocabWord @relation(fields: [wordId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([childId, wordId])
+  @@index([childId, nextReviewAt])
+  @@index([childId, state])
+  @@index([wordId])
+  @@map("child_vocab")
+}
+
+model Child {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String          @map("user_id") @db.Uuid
+  nickname       String
+  birthday       DateTime        @db.Date
+  gender         String          @default("unspecified")
+  avatarUrl      String?         @map("avatar_url")
+  isActive       Boolean         @default(true) @map("is_active")
+  deletedAt      DateTime?       @map("deleted_at") @db.Timestamptz(6)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  childInterests ChildInterest[]
+  childVocab     ChildVocab[]
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  conversations  Conversation[]
+  growthProfile  GrowthProfile?
+  learningEvents LearningEvent[]
+  memories       Memory[]
+  messages       Message[]
+  stories        Story[]
+  storySessions  StorySession[]
+  usageDaily     UsageDaily[]
+
+  @@index([userId])
+  @@map("children")
+}
+
+model Conversation {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  childId         String    @map("child_id") @db.Uuid
+  startedAt       DateTime  @default(now()) @map("started_at") @db.Timestamptz(6)
+  endedAt         DateTime? @map("ended_at") @db.Timestamptz(6)
+  turnCount       Int       @default(0) @map("turn_count")
+  summary         String?
+  memoryExtracted Boolean   @default(false) @map("memory_extracted")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  child           Child     @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  messages        Message[]
+
+  @@index([childId, startedAt(sort: Desc)])
+  @@map("conversations")
+}
+
+model GrowthProfile {
+  childId              String    @id @map("child_id") @db.Uuid
+  englishLevel         Int       @default(0) @map("english_level") @db.SmallInt
+  englishContentOffset Int       @default(0) @map("english_content_offset") @db.SmallInt
+  chineseLevel         Int       @default(1) @map("chinese_level") @db.SmallInt
+  knowledgeLevel       Int       @default(1) @map("knowledge_level") @db.SmallInt
+  confidenceScore      Decimal   @default(5) @map("confidence_score") @db.Decimal(4, 2)
+  stageOffset          Int       @default(0) @map("stage_offset") @db.SmallInt
+  evaluatedAt          DateTime? @map("evaluated_at") @db.Timestamptz(6)
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  child                Child     @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("growth_profiles")
+}
+
+model InterestCategory {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code         String        @unique
+  nameZh       String        @map("name_zh")
+  nameEn       String        @map("name_en")
+  sort         Int           @default(0)
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  interestTags InterestTag[]
+
+  @@map("interest_categories")
+}
+
+model InterestTag {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  categoryId     String           @map("category_id") @db.Uuid
+  code           String           @unique
+  nameZh         String           @map("name_zh")
+  nameEn         String           @map("name_en")
+  emoji          String?
+  ageMin         Int              @default(3) @map("age_min") @db.SmallInt
+  ageMax         Int              @default(10) @map("age_max") @db.SmallInt
+  safetyNote     String?          @map("safety_note")
+  isSystem       Boolean          @default(true) @map("is_system")
+  isActive       Boolean          @default(true) @map("is_active")
+  sort           Int              @default(0)
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  childInterests ChildInterest[]
+  category       InterestCategory @relation(fields: [categoryId], references: [id], onUpdate: NoAction)
+
+  @@index([categoryId])
+  @@map("interest_tags")
+}
+
+model LearningEvent {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  childId        String   @map("child_id") @db.Uuid
+  dimension      String
+  signal         String
+  value          Decimal  @db.Decimal
+  weight         Decimal  @default(1) @db.Decimal
+  source         String
+  refId          String?  @map("ref_id") @db.Uuid
+  idempotencyKey String?  @unique @map("idempotency_key")
+  occurredAt     DateTime @default(now()) @map("occurred_at") @db.Timestamptz(6)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  child          Child    @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([childId, dimension, occurredAt(sort: Desc)])
+  @@map("learning_events")
+}
+
+model Memory {
+  id              String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  childId         String                       @map("child_id") @db.Uuid
+  type            String                       @default("semantic")
+  category        String
+  content         String
+  embedding       Unsupported("vector(1024)")?
+  embeddingModel  String?                      @map("embedding_model")
+  importance      Decimal                      @default(0.5) @db.Decimal(3, 2)
+  confidence      Decimal                      @default(0.8) @db.Decimal(3, 2)
+  strength        Int                          @default(1)
+  sourceMessageId String?                      @map("source_message_id") @db.Uuid
+  status          String                       @default("active")
+  expiresAt       DateTime?                    @map("expires_at") @db.Timestamptz(6)
+  lastSeenAt      DateTime                     @default(now()) @map("last_seen_at") @db.Timestamptz(6)
+  createdAt       DateTime                     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime                     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  child           Child                        @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sourceMessage   Message?                     @relation(fields: [sourceMessageId], references: [id], onUpdate: NoAction)
+
+  @@index([childId, category, status])
+  @@index([embedding], map: "memories_embedding_hnsw_idx")
+  @@index([sourceMessageId])
+  @@map("memories")
+}
+
+model Message {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId String       @map("conversation_id") @db.Uuid
+  childId        String       @map("child_id") @db.Uuid
+  role           String
+  content        String
+  inputType      String       @default("text") @map("input_type")
+  audioUrl       String?      @map("audio_url")
+  langRatioEn    Decimal?     @map("lang_ratio_en") @db.Decimal(4, 3)
+  provider       String?
+  model          String?
+  tokensIn       Int?         @map("tokens_in")
+  tokensOut      Int?         @map("tokens_out")
+  latencyMs      Int?         @map("latency_ms")
+  moderation     String       @default("pass")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  memories       Memory[]
+  child          Child        @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([childId, createdAt(sort: Desc)])
+  @@index([conversationId, createdAt])
+  @@map("messages")
+}
+
+model ParentSettings {
+  userId            String   @id @map("user_id") @db.Uuid
+  dailyMinutesLimit Int      @default(30) @map("daily_minutes_limit")
+  allowedStartTime  DateTime @default(dbgenerated("'07:00:00'::time without time zone")) @map("allowed_start_time") @db.Time(6)
+  allowedEndTime    DateTime @default(dbgenerated("'21:00:00'::time without time zone")) @map("allowed_end_time") @db.Time(6)
+  englishEnabled    Boolean  @default(true) @map("english_enabled")
+  storyModeDefault  String   @default("adventure") @map("story_mode_default")
+  valuesThemes      String[] @default([]) @map("values_themes")
+  kidPinHash        String?  @map("kid_pin_hash")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("parent_settings")
+}
+
+model Story {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  childId       String         @map("child_id") @db.Uuid
+  titleZh       String?        @map("title_zh")
+  titleEn       String?        @map("title_en")
+  mode          String         @default("adventure")
+  theme         String?
+  themeTagIds   String[]       @default([]) @map("theme_tag_ids") @db.Uuid
+  ageStage      String         @map("age_stage")
+  englishLevel  Int?           @map("english_level") @db.SmallInt
+  enRatioTarget Decimal?       @map("en_ratio_target") @db.Decimal(4, 3)
+  enRatioActual Decimal?       @map("en_ratio_actual") @db.Decimal(4, 3)
+  outline       Json?
+  content       Json?
+  plainText     String?        @map("plain_text")
+  wordCount     Int?           @map("word_count")
+  status        String         @default("generating")
+  provider      String?
+  model         String?
+  promptVersion String?        @map("prompt_version")
+  error         String?
+  coverUrl      String?        @map("cover_url")
+  audioUrl      String?        @map("audio_url")
+  isFavorite    Boolean        @default(false) @map("is_favorite")
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  child         Child          @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  storySessions StorySession[]
+
+  @@index([childId, createdAt(sort: Desc)])
+  @@index([childId, status])
+  @@index([themeTagIds], type: Gin)
+  @@map("stories")
+}
+
+model StorySession {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storyId         String    @map("story_id") @db.Uuid
+  childId         String    @map("child_id") @db.Uuid
+  clientSessionId String?   @unique @map("client_session_id")
+  startedAt       DateTime  @default(now()) @map("started_at") @db.Timestamptz(6)
+  endedAt         DateTime? @map("ended_at") @db.Timestamptz(6)
+  progress        Decimal   @default(0) @db.Decimal(4, 3)
+  durationSeconds Int       @default(0) @map("duration_seconds")
+  completed       Boolean   @default(false)
+  rating          Int?      @db.SmallInt
+  exitSegment     Int?      @map("exit_segment")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  child           Child     @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  story           Story     @relation(fields: [storyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([childId, startedAt(sort: Desc)])
+  @@index([storyId])
+  @@map("story_sessions")
+}
+
+model UsageDaily {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  childId          String   @map("child_id") @db.Uuid
+  date             DateTime @db.Date
+  activeSeconds    Int      @default(0) @map("active_seconds")
+  chatTurns        Int      @default(0) @map("chat_turns")
+  storiesGenerated Int      @default(0) @map("stories_generated")
+  tokensIn         BigInt   @default(0) @map("tokens_in")
+  tokensOut        BigInt   @default(0) @map("tokens_out")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  child            Child    @relation(fields: [childId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([childId, date])
+  @@map("usage_daily")
+}
+
+model User {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  wxOpenid       String          @unique @map("wx_openid")
+  wxUnionid      String?         @unique @map("wx_unionid")
+  phoneEnc       String?         @map("phone_enc")
+  nickname       String?
+  avatarUrl      String?         @map("avatar_url")
+  status         String          @default("active")
+  lastLoginAt    DateTime?       @map("last_login_at") @db.Timestamptz(6)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  children       Child[]
+  parentSettings ParentSettings?
+  voiceProfiles  VoiceProfile[]
+
+  @@map("users")
+}
+
+model VocabWord {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  word       String
+  pos        String       @default("")
+  zh         String
+  level      Int          @db.SmallInt
+  theme      String?
+  ageMin     Int          @default(3) @map("age_min") @db.SmallInt
+  audioUrl   String?      @map("audio_url")
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  childVocab ChildVocab[]
+
+  @@unique([word, pos])
+  @@index([level, theme])
+  @@map("vocab_words")
+}
+
+model VoiceProfile {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String       @map("user_id") @db.Uuid
+  provider  String
+  voiceId   String       @map("voice_id")
+  voiceName String       @map("voice_name")
+  relation  String       @default("dad")
+  language  String       @default("multi")
+  isDefault Boolean      @default(false) @map("is_default")
+  status    String       @default("active")
+  consentAt DateTime     @map("consent_at") @db.Timestamptz(6)
+  createdAt DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  audio     VoiceAudio[]
+
+  @@unique([userId, provider, voiceId])
+  @@index([userId])
+  @@map("voice_profiles")
+}
+
+model VoiceAudio {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  voiceProfileId String       @map("voice_profile_id") @db.Uuid
+  textHash       String       @map("text_hash")
+  storageKey     String       @map("storage_key")
+  contentType    String       @default("audio/mpeg") @map("content_type")
+  bytes          Int
+  characters     Int
+  model          String?
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  voiceProfile   VoiceProfile @relation(fields: [voiceProfileId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([voiceProfileId, textHash])
+  @@map("voice_audio")
+}

@@ -1,0 +1,28 @@
+page {
+  background: #fff8ee;
+  color: #3a2e25;
+  font-size: 30px;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+}
+
+.btn-primary {
+  background: #ff8a3d;
+  color: #fff;
+  border-radius: 48px;
+  font-size: 32px;
+  font-weight: 600;
+  height: 96px;
+  line-height: 96px;
+  border: none;
+}
+
+.btn-primary.is-disabled {
+  opacity: 0.5;
+}
+
+/* 每个页面的根容器自带背景：H5 下 page 选择器不生效 */
+.page-root {
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: #fff8ee;
+}

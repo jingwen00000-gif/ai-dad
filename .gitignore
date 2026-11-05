@@ -1,0 +1,19 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.idea/
+.vscode/
+apps/miniapp/dist/
+apps/api/src/generated/
+# 小程序的 env 只放 API 地址，不含密钥，需要提交
+!apps/miniapp/.env.development
+!apps/miniapp/.env.production
+!apps/miniapp/.env.test
+# iOS 外壳里的网页由 apps/web 构建生成
+apps/ios/www/index.html
+apps/api/storage/

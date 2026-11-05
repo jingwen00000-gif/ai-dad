@@ -1,0 +1,1 @@
+../../../../../infra/sql/002_content.sql

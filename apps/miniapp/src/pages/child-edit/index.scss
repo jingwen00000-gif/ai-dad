@@ -1,0 +1,95 @@
+.edit {
+  padding: 40px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px;
+}
+
+.label {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.input {
+  height: 96px;
+  line-height: 96px;
+  padding: 0 32px;
+  background: #fff;
+  border-radius: 24px;
+  font-size: 30px;
+}
+
+.placeholder {
+  color: #b9a999;
+}
+
+.hint {
+  margin-top: 12px;
+  color: #8a7564;
+  font-size: 24px;
+}
+
+.segments {
+  display: flex;
+  gap: 20px;
+}
+
+.segment {
+  flex: 1;
+  height: 88px;
+  line-height: 88px;
+  text-align: center;
+  background: #fff;
+  border-radius: 24px;
+  border: 2px solid transparent;
+  font-size: 28px;
+}
+
+.segment.active {
+  border-color: #ff8a3d;
+  color: #ff8a3d;
+  font-weight: 600;
+}
+
+.save {
+  margin-top: 64px;
+}
+
+.btn-delete {
+  margin-top: 24px;
+  background: transparent;
+  color: #e5484d;
+  font-size: 28px;
+  border: none;
+}
+
+.btn-delete::after {
+  border: none;
+}
+
+/* H5 下 Input 内部是普通 input，需要撑满容器才能垂直居中（小程序原生 input 不受影响） */
+.input .weui-input {
+  height: 100%;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.row-value {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.row-arrow {
+  color: #b9a999;
+  font-size: 40px;
+  margin-left: 16px;
+}

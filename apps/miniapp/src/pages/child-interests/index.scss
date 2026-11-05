@@ -1,0 +1,98 @@
+.interests {
+  padding: 40px 40px 300px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 44px;
+  font-weight: 700;
+}
+
+.sub {
+  margin-top: 12px;
+  color: #8a7564;
+  font-size: 26px;
+}
+
+.group {
+  margin-top: 36px;
+}
+
+.group-title {
+  display: block;
+  font-size: 28px;
+  font-weight: 600;
+  color: #8a7564;
+  margin-bottom: 20px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  padding: 20px 32px;
+  background: #fff;
+  border-radius: 999px;
+  border: 3px solid transparent;
+}
+
+.chip.on {
+  border-color: #ff8a3d;
+  background: #fff1e6;
+}
+
+.chip-emoji {
+  font-size: 40px;
+  margin-right: 12px;
+}
+
+.chip-name {
+  font-size: 30px;
+}
+
+.chip.on .chip-name {
+  color: #e86a1a;
+  font-weight: 600;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120px 0;
+  color: #8a7564;
+}
+
+.btn-retry {
+  margin-top: 32px;
+  font-size: 28px;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 24px 40px 64px;
+  background: #fff8ee;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.skip {
+  margin-top: 20px;
+  text-align: center;
+  color: #8a7564;
+  font-size: 28px;
+}

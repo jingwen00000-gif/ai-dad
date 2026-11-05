@@ -1,0 +1,30 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+onlyBuiltDependencies:
+  - "@prisma/client"
+  - "@prisma/engines"
+  - "@nestjs/core"
+  - prisma
+  - "@tarojs/binding"
+  - "@swc/core"
+  - esbuild
+  - "@parcel/watcher"
+  - core-js
+  - core-js-pure
+ignoredBuiltDependencies:
+  - "@tarojs/cli"
+# eslint-config-next 允许 typescript-eslint v5-v8，pnpm 会复用小程序（ESLint 8）装的 v6，
+# 而 v6 不兼容 ESLint 9 → 这里只对 Next 的 lint 配置固定为 v8
+overrides:
+  "eslint-config-next>@typescript-eslint/eslint-plugin": "^8.0.0"
+  "eslint-config-next>@typescript-eslint/parser": "^8.0.0"
+# next 的 .d.ts 引用 react 类型但没声明依赖，pnpm 会从共享目录拿到小程序的 React 18 类型。
+# 声明为可选 peer 后，next 使用 web 自己的 @types/react（19）。
+packageExtensions:
+  next:
+    peerDependencies:
+      "@types/react": "*"
+    peerDependenciesMeta:
+      "@types/react":
+        optional: true

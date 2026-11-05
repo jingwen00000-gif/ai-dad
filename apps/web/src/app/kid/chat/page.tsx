@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import type { AvatarState } from "@/lib/avatar";
 import { dadReply, SUGGESTED_PROMPTS } from "@/lib/dad-replies";
 import { useSpeech } from "@/lib/use-speech";
+import { useSpeechInput } from "@/lib/use-speech-input";
 import { useActiveChild, useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 
@@ -22,9 +23,22 @@ export default function KidChat() {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stopSpeaking = useRef<(() => void) | null>(null);
   const speech = useSpeech();
+  const [lang, setLang] = useState<"en-US" | "zh-CN">("en-US");
+  // 孩子说话：识别中把文字实时显示在输入框，说完自动发送
+  const mic = useSpeechInput({
+    lang,
+    onInterim: (text) => setDraft(text),
+    onFinal: (text) => send(text),
+  });
 
-  // 虚拟形象状态：说话 > 思考 > 孩子正在输入时“听” > 待机
-  const avatarState: AvatarState = speaking ? "talking" : thinking ? "thinking" : draft.trim() ? "listening" : "idle";
+  // 虚拟形象状态：说话 > 思考 > 孩子在说 / 在打字时“听” > 待机
+  const avatarState: AvatarState = speaking
+    ? "talking"
+    : thinking
+      ? "thinking"
+      : mic.listening || draft.trim()
+        ? "listening"
+        : "idle";
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -78,7 +92,7 @@ export default function KidChat() {
         <div className="flex-1">
           <p className="text-lg font-extrabold">Dad</p>
           <p className="text-sm font-semibold text-success">
-            {speaking ? "talking…" : thinking ? "thinking…" : draft.trim() ? "listening…" : "Online"}
+            {speaking ? "talking…" : thinking ? "thinking…" : mic.listening || draft.trim() ? "listening…" : "Online"}
           </p>
         </div>
         <button
@@ -120,6 +134,15 @@ export default function KidChat() {
         </div>
       )}
 
+      {mic.error && (
+        <div role="status" className="flex items-start gap-2 border-t bg-accent px-4 py-2 text-sm text-accent-foreground">
+          <span className="flex-1">{mic.error}</span>
+          <button type="button" onClick={mic.clearError} className="font-bold" aria-label="Dismiss">
+            ✕
+          </button>
+        </div>
+      )}
+
       <form
         className="flex items-center gap-2 border-t bg-background/60 p-3"
         onSubmit={(e) => {
@@ -129,17 +152,37 @@ export default function KidChat() {
       >
         <button
           type="button"
-          disabled
-          title="Voice is coming in V2"
-          className="flex h-12 shrink-0 items-center gap-1.5 rounded-full bg-muted px-4 text-sm font-bold text-muted-foreground"
+          onClick={() => {
+            if (mic.listening) return mic.stop();
+            stopSpeaking.current?.();
+            setSpeaking(false);
+            if (voiceOn) speech.unlock();
+            mic.start();
+          }}
+          disabled={thinking}
+          aria-pressed={mic.listening}
+          aria-label={mic.listening ? "Stop and send" : "Talk to Dad"}
+          className={cn(
+            "relative flex h-12 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-bold transition-colors disabled:opacity-50",
+            mic.listening ? "bg-destructive text-white" : "bg-secondary text-secondary-foreground",
+          )}
         >
-          <Mic className="size-5" />
-          <span className="hidden sm:inline">Hold to Talk · soon</span>
+          {mic.listening && <span className="absolute inset-0 animate-ping rounded-full bg-destructive/40" aria-hidden />}
+          <Mic className="relative size-5" />
+          <span className="relative hidden sm:inline">{mic.listening ? "Listening…" : "Talk"}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setLang(lang === "en-US" ? "zh-CN" : "en-US")}
+          aria-label={lang === "en-US" ? "Voice language: English. Switch to Chinese" : "语音语言：中文，切换为英文"}
+          className="h-12 shrink-0 rounded-full border-2 border-border px-3 text-sm font-extrabold text-muted-foreground"
+        >
+          {lang === "en-US" ? "EN" : "中"}
         </button>
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Type to Dad…"
+          placeholder={mic.listening ? "Listening…" : "Type to Dad…"}
           aria-label="Message to Dad"
           maxLength={200}
           className="h-12 min-w-0 flex-1 rounded-full border-2 border-input bg-card px-4 text-base outline-none focus-visible:border-ring"
